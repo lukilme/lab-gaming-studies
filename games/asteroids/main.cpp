@@ -1,7 +1,4 @@
 #include "./models/configs.hpp"
-#include "./models/enemy.hpp"
-#include "./models/player.hpp"
-#include "./models/shoot.hpp"
 #include "raylib.h"
 
 #if defined(PLATFORM_WEB)
@@ -17,12 +14,33 @@ static const int screenHeight = 450;
 #define SECOND_WAVE 20
 #define THIRD_WAVE 50
 
+
+typedef struct Player{
+    Rectangle body;
+    Vector2 speed;
+    Color color;
+} Player;
+
+typedef struct Enemy{
+    Rectangle body;
+    Vector2 speed;
+    bool active;
+    Color color;
+} Enemy;
+
+typedef struct Shoot{
+    Rectangle body;
+    Vector2 speed;
+    bool active;
+    Color color;
+} Shoot;
+
 typedef enum { FIRST = 0, SECOND, THIRD } EnemyWave;
 
 GameConfig config;
-Player player;
-Enemy enemies[NUM_MAX_ENEMIES];
-Shoot shoots[NUM_SHOOTS];
+static Player player = { 0 };
+static Enemy enemies[NUM_MAX_ENEMIES] = { 0 };
+static Shoot shoots[NUM_SHOOTS] = { 0 };
 static EnemyWave wave;
 
 static void InitGame(void);
@@ -47,20 +65,40 @@ int main() {
         UnloadGame();
         CloseWindow();
         return 0;
-
-    return 0;
 }
 
 void InitGame(void) {
+  config.shootRate = 0;
+  config.pause = false;
+  config.gameOver = false;
+  config.victory = false;
+  config.smooth = false;
   wave = FIRST;
-  player = Player("John Doe", {5, 5}, {20, 50, 20, 255});
+  config.activeEnemies = FIRST_WAVE;
+  config.enemiesKill = 0;
+  config.score = 0;
+  config.alpha = 0.0f;
+
+  player.body = { 5, 5, 20, 20 }; 
+  player.speed = { 5, 5 };
+  player.color = { 20, 50, 20, 255 };
 
   for (int i = 0; i < NUM_MAX_ENEMIES; i++) {
-    enemies[i] = Enemy(false, {50, 50}, {0, 255, 0, 255});
+    enemies[i].body.width = 10;
+    enemies[i].body.height = 10;
+    enemies[i].body.x = GetRandomValue(screenWidth, screenWidth + 1000);
+    enemies[i].body.y = GetRandomValue(0, screenHeight - enemies[i].body.height);
+    enemies[i].speed.x = 5;
+    enemies[i].speed.y = 5;
+    enemies[i].active = true;
+    enemies[i].color = GRAY;  
   }
 
   for (int i = 0; i < NUM_SHOOTS; i++) {
-    shoots[i] = Shoot(false, {200, 0}, {0, 0, 255, 255});
+    shoots[i].active = false;
+    shoots[i].body = { 200, 0, 10, 10 };  
+    shoots[i].speed = { 3, 3 };
+    shoots[i].color = { 0, 0, 255, 255 };
   }
 }
 
@@ -149,7 +187,71 @@ void UpdateGame(void) {
         if (IsKeyDown(KEY_UP)) player.body.y -= player.speed.y;
         if (IsKeyDown(KEY_DOWN)) player.body.y += player.speed.y;
 
+      for(int i = 0; i < config.activeEnemies; i++){
+        if(CheckCollisionRecs(player.body, enemies[i].body)) config.gameOver = true;
+      }
 
+      for(int i = 0; i < config.activeEnemies; i++){
+        if(enemies[i].active){
+          enemies[i].body.x -= enemies[i].speed.x;
+
+          if(enemies[i].body.x < 0){
+            enemies[i].body.x = GetRandomValue(screenWidth, screenHeight + 1000);
+            enemies[i].body.y = GetRandomValue(0, screenHeight - enemies[i].body.height);
+          }
+        }
+      }
+
+      if(player.body.x <= 0) player.body.x = 0;
+      if(player.body.x + player.body.width >= screenWidth) player.body.x = screenWidth - player.body.width;
+      if(player.body.y <= 0) player.body.y = 0;
+      if(player.body.y + player.body.height >= screenHeight) player.body.y = screenHeight - player.body.height;
+
+      if(IsKeyDown(KEY_SPACE)){
+        config.shootRate += 5;
+
+        for(int i = 0; i < NUM_SHOOTS; i++){
+          if(!shoots[i].active && config.shootRate%20 == 0){
+            shoots[i].body.x = player.body.x;
+            shoots[i].body.y = player.body.y + player.body.height/4;
+            shoots[i].active = true;
+            break;
+          }
+        }
+      }
+
+
+      for(int i = 0; i < NUM_SHOOTS; i++){
+
+        if(shoots[i].active){
+
+          shoots[i].body.x += shoots[i].speed.x;
+
+          for(int j = 0; j < config.activeEnemies; j++){
+
+            if(enemies[j].active){
+              if(CheckCollisionRecs(shoots[i].body, enemies[j].body)){
+                shoots[i].active = false;
+                enemies[j].body.x = GetRandomValue(screenWidth, screenWidth + 1000);
+                enemies[j].body.y = GetRandomValue(0, screenHeight - enemies[j].body.height);
+                config.shootRate = 0;
+                config.enemiesKill++;
+                config.score+=100;
+              }
+              if (shoots[i].body.x + shoots[i].body.width >= screenWidth){
+                shoots[i].active = false;
+                config.shootRate = 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  else{
+    if(IsKeyPressed(KEY_ENTER)){
+      InitGame();
+      config.gameOver = false;
     }
   }
 }
@@ -160,6 +262,11 @@ void DrawGame(void) {
 
   if (!config.gameOver) {
     DrawRectangleRec(player.body, player.color);
+
+    if (wave == FIRST) DrawText("FIRST WAVE", screenWidth/2 - MeasureText("FIRST WAVE", 40)/2, screenHeight/2 - 40, 40, Fade(BLACK, config.alpha));
+    else if (wave == SECOND) DrawText("SECOND WAVE", screenWidth/2 - MeasureText("SECOND WAVE", 40)/2, screenHeight/2 - 40, 40, Fade(BLACK, config.alpha));
+    else if (wave == THIRD) DrawText("THIRD WAVE", screenWidth/2 - MeasureText("THIRD WAVE", 40)/2, screenHeight/2 - 40, 40, Fade(BLACK, config.alpha));
+
 
     for (int i = 0; i < config.activeEnemies; i++) {
       if (enemies[i].active)

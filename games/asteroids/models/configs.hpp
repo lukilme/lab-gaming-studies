@@ -1,9 +1,6 @@
 #ifndef CONFIGS_H
 #define CONFIGS_H
 
-#include "player.hpp"
-#include "enemy.hpp"
-#include "shoot.hpp"
 
 struct GameConfig {
     bool gameOver;
@@ -11,9 +8,8 @@ struct GameConfig {
     int score;
     bool victory;
 
-
-    int shootRate;
     float alpha;
+    int shootRate;
 
     int activeEnemies;
     int enemiesKill;

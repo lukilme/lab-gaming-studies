@@ -882,40 +882,40 @@ function dbg(...args) {
 // === Body ===
 
 var ASM_CONSTS = {
-  89252: () => { if (document.fullscreenElement) return 1; },  
- 89298: () => { return document.getElementById('canvas').width; },  
- 89350: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 89418: () => { document.exitFullscreen(); },  
- 89445: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
- 89518: () => { if (document.fullscreenElement) return 1; },  
- 89564: () => { return document.getElementById('canvas').width; },  
- 89616: () => { return screen.width; },  
- 89641: () => { document.exitFullscreen(); },  
- 89668: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
- 89801: () => { if (document.fullscreenElement) return 1; },  
- 89847: () => { return document.getElementById('canvas').width; },  
- 89899: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 89967: () => { if (document.fullscreenElement) return 1; },  
- 90013: () => { return document.getElementById('canvas').width; },  
- 90065: () => { return screen.width; },  
- 90090: () => { if (document.fullscreenElement) return 1; },  
- 90136: () => { return document.getElementById('canvas').width; },  
- 90188: () => { return screen.width; },  
- 90213: () => { document.exitFullscreen(); },  
- 90240: () => { if (document.fullscreenElement) return 1; },  
- 90286: () => { return document.getElementById('canvas').width; },  
- 90338: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 90406: () => { document.exitFullscreen(); },  
- 90433: () => { return screen.width; },  
- 90458: () => { return screen.height; },  
- 90484: () => { return window.screenX; },  
- 90511: () => { return window.screenY; },  
- 90538: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
- 90591: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
- 90662: () => { document.getElementById('canvas').style.cursor = 'none'; },  
- 90719: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
- 90790: () => { if (document.fullscreenElement) return 1; },  
- 90836: () => { if (document.pointerLockElement) return 1; }
+  89120: () => { if (document.fullscreenElement) return 1; },  
+ 89166: () => { return document.getElementById('canvas').width; },  
+ 89218: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 89286: () => { document.exitFullscreen(); },  
+ 89313: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
+ 89386: () => { if (document.fullscreenElement) return 1; },  
+ 89432: () => { return document.getElementById('canvas').width; },  
+ 89484: () => { return screen.width; },  
+ 89509: () => { document.exitFullscreen(); },  
+ 89536: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
+ 89669: () => { if (document.fullscreenElement) return 1; },  
+ 89715: () => { return document.getElementById('canvas').width; },  
+ 89767: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 89835: () => { if (document.fullscreenElement) return 1; },  
+ 89881: () => { return document.getElementById('canvas').width; },  
+ 89933: () => { return screen.width; },  
+ 89958: () => { if (document.fullscreenElement) return 1; },  
+ 90004: () => { return document.getElementById('canvas').width; },  
+ 90056: () => { return screen.width; },  
+ 90081: () => { document.exitFullscreen(); },  
+ 90108: () => { if (document.fullscreenElement) return 1; },  
+ 90154: () => { return document.getElementById('canvas').width; },  
+ 90206: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 90274: () => { document.exitFullscreen(); },  
+ 90301: () => { return screen.width; },  
+ 90326: () => { return screen.height; },  
+ 90352: () => { return window.screenX; },  
+ 90379: () => { return window.screenY; },  
+ 90406: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
+ 90459: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
+ 90530: () => { document.getElementById('canvas').style.cursor = 'none'; },  
+ 90587: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
+ 90658: () => { if (document.fullscreenElement) return 1; },  
+ 90704: () => { if (document.pointerLockElement) return 1; }
 };
 function GetWindowInnerWidth() { return window.innerWidth; }
 function GetWindowInnerHeight() { return window.innerHeight; }
@@ -3954,10 +3954,6 @@ function GetWindowInnerHeight() { return window.innerHeight; }
     return -e.errno;
   }
   }
-
-  var __abort_js = () => {
-      abort('native code called abort()');
-    };
 
   var nowIsMonotonic = 1;
   var __emscripten_get_now_is_monotonic = () => nowIsMonotonic;
@@ -10228,8 +10224,6 @@ var wasmImports = {
   __syscall_ioctl: ___syscall_ioctl,
   /** @export */
   __syscall_openat: ___syscall_openat,
-  /** @export */
-  _abort_js: __abort_js,
   /** @export */
   _emscripten_get_now_is_monotonic: __emscripten_get_now_is_monotonic,
   /** @export */

@@ -1,1 +1,1 @@
-emcc main.cpp ./models/player.cpp ./models/configs.cpp ./models/enemy.cpp ./models/shoot.cpp -o index.js -I/home/kilmer/Development/lab/raylib/raylib/src -L/home/kilmer/Development/lab/raylib/raylib/src -lraylib -s USE_GLFW=3 -s USE_WEBGL2=1 -DPLATFORM_WEB --no-html
+emcc main.cpp ./models/configs.cpp -o index.asm.js -I/home/kilmer/Development/lab/raylib/raylib/src -L/home/kilmer/Development/lab/raylib/raylib/src -lraylib -s USE_GLFW=3 -s USE_WEBGL2=1 -DPLATFORM_WEB
